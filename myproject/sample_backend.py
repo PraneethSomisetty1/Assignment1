@@ -2,6 +2,9 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 from flask_cors import CORS
+import string
+import random
+import sys
 
 app = Flask(__name__)
 CORS(app)
@@ -37,16 +40,23 @@ users = {
    ]
 }
 
-@app.route('/users/<id>')
+@app.route('/users/<id>', methods=['GET','DELETE'])
 def get_user(id):
-   if id :
+   if request.method == 'GET' :
       for user in users['users_list']:
         if user['id'] == id:
            return user
       return ({})
-   return users  
+   if request.method == 'DELETE':
+      for user in users['users_list']:
+         if id in user.values():
+            users['users_list'].remove(user)
+      resp = jsonify(success=True)
+      resp.status_code = 204
+      return resp
 
-@app.route('/users', methods=['GET', 'POST', 'DELETE'])
+
+@app.route('/users', methods=['GET', 'POST'])
 def get_users():
    if request.method == 'GET':
       search_username = request.args.get('name')
@@ -64,12 +74,13 @@ def get_users():
       return users
    elif request.method == 'POST':
       userToAdd = request.get_json()
+      idToAdd = Id_Generator()
+      userToAdd['id'] = idToAdd
       users['users_list'].append(userToAdd)
-      resp = jsonify(success=True)
+      resp = jsonify(userToAdd)
       resp.status_code = 201
       return resp
-   elif request.method == 'DELETE':
-      userToAdd = request.get_json()
-      users['users_list'].remove(userToAdd)
-      resp = jsonify(success=True)
-      return resp
+
+#stackoverflow/internet
+def Id_Generator(size = 6, chars=string.ascii_lowercase + string.digits) :
+   return ''.join(random.choice(chars) for _ in range(size)) 
