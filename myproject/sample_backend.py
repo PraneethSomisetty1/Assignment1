@@ -51,8 +51,11 @@ def get_user(id):
       for user in users['users_list']:
          if id in user.values():
             users['users_list'].remove(user)
-      resp = jsonify(success=True)
-      resp.status_code = 204
+            resp = jsonify(success=True)
+            resp.status_code = 204
+            return resp
+      resp = jsonify(success=False)
+      resp.status_code = 404     
       return resp
 
 
