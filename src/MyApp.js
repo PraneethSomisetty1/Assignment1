@@ -31,11 +31,6 @@ function MyApp() {
 
   async function deleteperson(person) {
     try {
-      // const requestOptions = {
-      //   method: "DELETE",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({id: person.id, name: person.name, job: person.job})
-      // };
       await axios.delete('http://localhost:5000/users/' + person.id, person);
       return true;
     } catch (error) {
